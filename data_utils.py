@@ -25,7 +25,6 @@ def random_split(
     Returns:
       None
     """ 
-    
     assert train_ratio + val_ratio <= 1, 'Total of train, val ratio must <= 1'
 
     # Get data path
