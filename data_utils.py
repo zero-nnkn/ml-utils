@@ -1,3 +1,4 @@
+import os
 import glob
 import random
 import shutil
@@ -12,11 +13,11 @@ def random_split(
     name: str=''
 ) -> None:
     """
-    It takes in a path to a folder containing images, and splits the images into train, val, and test
+    It takes in a path to a folder containing datas, and splits the datas into train, val, and test
     folders
     
     Args:
-      input_path (str): The path to the folder containing the images you want to split.
+      input_path (str): The path to the folder containing the datas you want to split.
       output_path (str): The path to the folder where you want to save the train/val/test folders.
       train_ratio (float): the ratio of the training set
       val_ratio (float): float,
@@ -41,7 +42,7 @@ def random_split(
     if n > int(n*(train_ratio+val_ratio)):
         test_path.mkdir(parents=True, exist_ok=True)
 
-    # Shuffle images
+    # Shuffle datas
     random.shuffle(fp)
     train, val, test = fp[:int(n*train_ratio)], fp[int(n*train_ratio):int(n*(train_ratio+val_ratio))], fp[int(n*(train_ratio+val_ratio)):]
     
@@ -51,3 +52,37 @@ def random_split(
     split_test = [shutil.copy2(f, test_path) for f in test] if len(test) > 0 else None
 
     print(f'Split done: train-{len(train)}, val-{len(val)}, test-{len(test)}')
+
+
+DATA_FORMATS = 'bmp', 'dng', 'jpeg', 'jpg', 'mpo', 'png', 'tif', 'tiff', 'webp', 'pfm'  # include data suffixes
+def get_data_paths(dir: str | list[str], prefix: str = '') -> list[str]:
+    """
+    It takes a directory or a file containing a list of directories and/or files, and returns a list of
+    all the files in those directories that have a file extension in the DATA_FORMATS list
+    
+    Args:
+      dir (str | list[str]): str | list[str]
+      prefix (str): str = ''
+    
+    Returns:
+      A list of strings.
+    """
+    try:
+        f = []  # data files
+        for d in dir if isinstance(dir, list) else [dir]:
+            p = Path(d)  # os-agnostic
+            if p.is_dir():  # dir
+                f += glob.glob(str(p / '**' / '*.*'), recursive=True)
+            elif p.is_file():  # file
+                with open(p) as t:
+                    t = t.read().strip().splitlines()
+                    parent = str(p.parent) + os.sep
+                    f += [x.replace('./', parent, 1) if x.startswith('./') else x for x in t]  # to global path
+            else:
+                raise FileNotFoundError(f'{prefix}{p} does not exist')
+        data_files = sorted(x for x in f if x.split('.')[-1].lower() in DATA_FORMATS)
+        assert data_files, f'{prefix}No data found'
+        return data_files
+    except Exception as e:
+        raise Exception(f'{prefix}Error loading data from {dir}: {e}') from e
+    
