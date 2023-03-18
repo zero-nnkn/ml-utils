@@ -8,7 +8,7 @@ class Profile(contextlib.ContextDecorator):
     """
     YOLOv8 Profile class.
     Usage: as a decorator with @Profile() or as a context manager with 'with Profile():'
-    Source: https://github.com/ultralytics/ultralytics/blob/main/ultralytics/yolo/utils/ops.py
+    Modified from: https://github.com/ultralytics/ultralytics/blob/main/ultralytics/yolo/utils/ops.py
     """
 
     def __init__(self, t=0.0):

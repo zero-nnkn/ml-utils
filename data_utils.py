@@ -59,6 +59,7 @@ def get_data_paths(dir: str | list[str], prefix: str = '') -> list[str]:
     """
     It takes a directory or a file containing a list of directories and/or files, and returns a list of
     all the files in those directories that have a file extension in the DATA_FORMATS list
+    Modified from: https://github.com/ultralytics/yolov5/blob/master/utils/dataloaders.py
     
     Args:
       dir (str | list[str]): str | list[str]
