@@ -54,19 +54,24 @@ def random_split(
     print(f'Split done: train-{len(train)}, val-{len(val)}, test-{len(test)}')
 
 
-IMG_FORMATS = 'bmp', 'dng', 'jpeg', 'jpg', 'mpo', 'png', 'tif', 'tiff', 'webp', 'pfm'  # include data suffixes
-def get_data_paths(dir: str | list[str], data_formats: list = IMG_FORMATS, prefix: str = '') -> list[str]:
+  # example of data_formats
+
+def get_data_paths(dir: str | list[str], data_formats: list, prefix: str = '') -> list[str]:
     """
-    It takes a directory or a file containing a list of directories and/or files, and returns a list of
-    all the files in those directories that have a file extension in the data_formats list
+    > It takes a directory or a list of directories and returns a list of all the files in those
+    directories that have a file extension in the data_formats
     Modified from: https://github.com/ultralytics/yolov5/blob/master/utils/dataloaders.py
-    
+
     Args:
       dir (str | list[str]): str | list[str]
+      data_formats (list): list
       prefix (str): str = ''
     
     Returns:
       A list of strings.
+
+    Example of data_formats: 
+      IMG_FORMATS = 'bmp', 'dng', 'jpeg', 'jpg', 'mpo', 'png', 'tif', 'tiff', 'webp', 'pfm'
     """
     try:
         f = []  # data files
