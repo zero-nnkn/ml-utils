@@ -54,11 +54,11 @@ def random_split(
     print(f'Split done: train-{len(train)}, val-{len(val)}, test-{len(test)}')
 
 
-DATA_FORMATS = 'bmp', 'dng', 'jpeg', 'jpg', 'mpo', 'png', 'tif', 'tiff', 'webp', 'pfm'  # include data suffixes
-def get_data_paths(dir: str | list[str], prefix: str = '') -> list[str]:
+IMG_FORMATS = 'bmp', 'dng', 'jpeg', 'jpg', 'mpo', 'png', 'tif', 'tiff', 'webp', 'pfm'  # include data suffixes
+def get_data_paths(dir: str | list[str], data_formats: list = IMG_FORMATS, prefix: str = '') -> list[str]:
     """
     It takes a directory or a file containing a list of directories and/or files, and returns a list of
-    all the files in those directories that have a file extension in the DATA_FORMATS list
+    all the files in those directories that have a file extension in the data_formats list
     Modified from: https://github.com/ultralytics/yolov5/blob/master/utils/dataloaders.py
     
     Args:
@@ -81,7 +81,7 @@ def get_data_paths(dir: str | list[str], prefix: str = '') -> list[str]:
                     f += [x.replace('./', parent, 1) if x.startswith('./') else x for x in t]  # to global path
             else:
                 raise FileNotFoundError(f'{prefix}{p} does not exist')
-        data_files = sorted(x for x in f if x.split('.')[-1].lower() in DATA_FORMATS)
+        data_files = sorted(x for x in f if x.split('.')[-1].lower() in data_formats)
         assert data_files, f'{prefix}No data found'
         return data_files
     except Exception as e:
