@@ -4,6 +4,18 @@ import time
 import torch
 
 
+def sync_time():
+    """
+    It synchronizes the time on the GPU with the time on the CPU
+    
+    Returns:
+      The time in seconds since the epoch as a floating point number.
+    """
+    if torch.cuda.is_available():
+        torch.cuda.synchronize()
+    return time.time()
+
+
 class Profile(contextlib.ContextDecorator):
     """
     YOLOv8 Profile class.
