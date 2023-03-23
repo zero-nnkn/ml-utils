@@ -54,8 +54,6 @@ def random_split(
     print(f'Split done: train-{len(train)}, val-{len(val)}, test-{len(test)}')
 
 
-  # example of data_formats
-
 def get_data_paths(dir: str | list[str], data_formats: list, prefix: str = '') -> list[str]:
     """
     > It takes a directory or a list of directories and returns a list of all the files in those
