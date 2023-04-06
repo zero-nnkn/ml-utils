@@ -3,5 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Caffe model
+*.caffemodel
+
+# Prototype model
+*.prototxt
+
 # VS Code
 .vscode
+
