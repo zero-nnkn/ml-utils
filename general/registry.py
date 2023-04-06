@@ -70,7 +70,7 @@ class Registry(Iterable[Tuple[str, Any]]):
         ret = self._obj_map.get(name)
         if ret is None:
             raise KeyError(
-                "No object named '{}' found in '{}' registry!".format(name, self._name)
+                f"No object named '{name}' found in '{self._name}' registry!"
             )
         return ret
 
@@ -82,7 +82,7 @@ class Registry(Iterable[Tuple[str, Any]]):
         table = tabulate(
             self._obj_map.items(), headers=table_headers, tablefmt="fancy_grid"
         )
-        return "Registry of {}:\n".format(self._name) + table
+        return f"Registry of {self._name}:\n" + table
 
     def __iter__(self) -> Iterator[Tuple[str, Any]]:
         return iter(self._obj_map.items())

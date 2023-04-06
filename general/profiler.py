@@ -7,7 +7,7 @@ import torch
 def sync_time():
     """
     It synchronizes the time on the GPU with the time on the CPU
-    
+
     Returns:
       The time in seconds since the epoch as a floating point number.
     """
