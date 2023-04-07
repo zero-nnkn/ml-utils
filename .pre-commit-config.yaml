@@ -33,20 +33,26 @@ repos:
         name: Upgrade code
         args: [ --py37-plus ]
 
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.12.0
-    hooks:
-      - id: isort
-        name: I-sort imports
-
   - repo: https://github.com/psf/black
     rev: 23.3.0
     hooks:
       - id: black
         name: PEP8 formatting
 
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        name: I-sort imports
+
   - repo: https://github.com/PyCQA/flake8
     rev: 6.0.0
     hooks:
       - id: flake8
-        name: PEP8
+        name: PEP8 checker
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.1.1
+    hooks:
+      - id: mypy
+        name: Static type checker
