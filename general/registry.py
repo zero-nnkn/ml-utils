@@ -35,7 +35,7 @@ class Registry(Iterable[Tuple[str, Any]]):
     def __init__(self, name: str) -> None:
         """
         Args:
-            name (str): the name of this registry
+            name (str): the name of this registry.
         """
         self._name: str = name
         self._obj_map: Dict[str, Any] = {}
@@ -62,7 +62,7 @@ class Registry(Iterable[Tuple[str, Any]]):
 
             return deco
 
-        # used as a function call
+        # Used as a function call
         name = obj.__name__
         self._do_register(name, obj)
 

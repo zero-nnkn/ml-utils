@@ -14,18 +14,14 @@ def random_split(
     name: str = "",
 ) -> None:
     """
-    It takes in a path to a folder containing datas, and splits the datas into train, val, and test
-    folders
+    It takes in a path to a folder containing datas, and splits the datas into train, val, and test.
 
     Args:
-      input_path (str): The path to the folder containing the datas you want to split.
-      output_path (str): The path to the folder where you want to save the train/val/test folders.
-      train_ratio (float): the ratio of the training set
-      val_ratio (float): float,
-      name (str): str=''
-
-    Returns:
-      None
+      input_path (str): Path to the folder containing the datas you want to split.
+      output_path (str): Path to the folder where you want to save the train/val/test folders.
+      train_ratio (float): Ratio of the training set.
+      val_ratio (float): Ratio of evaluation set.
+      name (str): Name of sub data (eg. class name).
     """
 
     def copy_files(files, des_dir, move):
@@ -72,19 +68,19 @@ def get_data_paths(
 ) -> list[str]:
     """
     It takes a directory or a list of directories and returns a list of all the files in those
-    directories that have a file extension in the data_formats
+    directories that have a file extension in the data_formats.
     Modified from: https://github.com/ultralytics/yolov5/blob/master/utils/dataloaders.py
 
     Args:
-      dir (str | list[str]): str | list[str]
-      data_formats (list): list
-      prefix (str): str = ''
+      dir (str | list[str]): Dir or list of dirs containing data.
+      data_formats (list): List of file extensions.
+      prefix (str): Prefix for logging messages.
 
     Returns:
       A list of strings.
 
     Example of data_formats:
-      IMG_FORMATS = 'bmp', 'dng', 'jpeg', 'jpg', 'mpo', 'png', 'tif', 'tiff', 'webp', 'pfm'
+      IMG_FORMATS = "bmp", "dng", "jpeg", "jpg", "png"
     """
     try:
         f = []  # data files
