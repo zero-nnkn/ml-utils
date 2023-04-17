@@ -84,7 +84,7 @@ def get_data_paths(
       A list of strings.
 
     Example of data_formats:
-      IMG_FORMATS = 'bmp', 'dng', 'jpeg', 'jpg', 'mpo', 'png', 'tif', 'tiff', 'webp', 'pfm'
+      IMG_FORMATS = "bmp", "dng", "jpeg", "jpg", "png"
     """
     try:
         f = []  # data files

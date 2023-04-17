@@ -6,9 +6,9 @@ import numpy as np
 
 class OpenPosePredictor(ABC):
     """
-    The Pose Estimation class to predict pose keypoints of an image by OpenPose using OpenCV
+    The Pose Estimation class to predict pose keypoints of an image by OpenPose using OpenCV.
 
-    Usage: Specify the subclass corresponding to the model you want to use
+    Usage: Specify the subclass corresponding to the model you want to use.
       COCO:   18 points
       MPI:    15 points
       Body25: 25 points
@@ -26,9 +26,13 @@ class OpenPosePredictor(ABC):
 
         Args:
           prototxt_path (str): The path to the prototxt file.
-          weight_path (str): The path to the caffemodel file.
-          in_size (tuple): tuple = (368, 368): the input image dimensions
-          threshold (float): float = 0.05: confidence threshold to identify key points
+            Download: https://github.com/CMU-Perceptual-Computing-Lab/openpose/tree/master/models/pose
+          weight_path (str): The path to the Caffe model file.
+            COCO:    https://posefs1.perception.cs.cmu.edu/OpenPose/models/pose/coco/pose_iter_440000.caffemodel
+            MPI:     https://posefs1.perception.cs.cmu.edu/OpenPose/models/pose/mpi/pose_iter_160000.caffemodel
+            BODY_25: https://posefs1.perception.cs.cmu.edu/OpenPose/models/pose/body_25/pose_iter_584000.caffemodel
+          in_size (tuple): tuple = (368, 368): the input image dimensions.
+          threshold (float): float = 0.05: confidence threshold to identify key points.
         """
         self.in_size = in_size  # (in_width, in_height)
         self.threshold = threshold
@@ -38,8 +42,8 @@ class OpenPosePredictor(ABC):
     @abstractmethod
     def _init__model_infor(self) -> None:
         """
-        > This function initializes the model information
-        and will be implemented in subclass corresponding to the model
+        This function initializes the model information
+        and will be implemented in subclass corresponding to the model.
         """
         raise NotImplementedError
 
@@ -49,11 +53,7 @@ class OpenPosePredictor(ABC):
 
         Args:
           prototxt_path (str): The path to the prototxt file.
-            Download: https://github.com/CMU-Perceptual-Computing-Lab/openpose/tree/master/models/pose
-          weight_path (str): The path to the Caffe model file.
-            COCO:    https://posefs1.perception.cs.cmu.edu/OpenPose/models/pose/coco/pose_iter_440000.caffemodel
-            MPI:     https://posefs1.perception.cs.cmu.edu/OpenPose/models/pose/mpi/pose_iter_160000.caffemodel
-            BODY_25: https://posefs1.perception.cs.cmu.edu/OpenPose/models/pose/body_25/pose_iter_584000.caffemodel
+          weight_path (str): The path to the caffemodel file.
 
         Returns:
           The model is being returned.
@@ -63,13 +63,13 @@ class OpenPosePredictor(ABC):
 
     def predict(self, img) -> list:
         """
-        It takes an image as input, runs it through the network, and returns a list of keypoints
+        It takes an image as input, runs it through the network, and returns a list of keypoints.
 
         Args:
           img: The image to be processed.
 
         Returns:
-          A list of keypoints
+          A list of keypoints.
         """
         img_h, img_w, _ = img.shape
         self._prepare_input(img)
@@ -80,10 +80,10 @@ class OpenPosePredictor(ABC):
     def _prepare_input(self, img: np.array) -> None:
         """
         It takes an image, resizes it to the input size of the network,
-        and sets the image as the input to the network
+        and sets the image as the input to the network.
 
         Args:
-          img (np.array): the input image
+          img (np.array): the input image.
         """
         inp_blob = cv2.dnn.blobFromImage(
             img, 1.0 / 255, self.in_size, (0, 0, 0), swapRB=False, crop=False
@@ -97,10 +97,10 @@ class OpenPosePredictor(ABC):
 
         Args:
           net_ouput (cv2.Mat): the output of the neural network (4D matrix).
-            - 1st dim: image ID (if pass more than 1 image)
+            - 1st dim: image ID (if pass more than 1 image).
             - 2nd dim: index of a keypoint.
-                Ex COCO:  18 keypoint confidence maps + 1 background + 19*2 Part Affinity Maps
-            - 3rd, 4th: height, width of output map
+                Ex COCO:  18 keypoint confidence maps + 1 background + 19*2 Part Affinity Maps.
+            - 3rd, 4th: height, width of output map.
           img_size (tuple): The size of the image that we're going to be processing.
 
         Returns:
@@ -132,9 +132,9 @@ class OpenPosePredictor(ABC):
         It takes a list of keypoints and an image, and draws the skeleton keypoints on the image.
 
         Args:
-          keypoints (list): list of keypoints
-          img: The image to draw the skeleton on
-          put_text (bool): If True, the keypoints will be labeled with their index
+          keypoints (list): list of keypoints.
+          img: The image to draw the skeleton on.
+          put_text (bool): If True, the keypoints will be labeled with their index.
 
         Returns:
           The image with the skeleton drawn on it.
@@ -159,7 +159,7 @@ class OpenPosePredictor(ABC):
 
     def _visualize_points(self, keypoints: list, img, put_text: bool = False):
         """
-        It takes a list of keypoints and an image, and draws a circle around each keypoint
+        It takes a list of keypoints and an image, and draws a circle around each keypoint.
         """
         for i in range(len(self.BODY_PARTS)):
             if keypoints[i]:
@@ -329,11 +329,11 @@ class Body25OpenPosePredictor(OpenPosePredictor):
 
 def add_keypoints_to_json(img: np.array, pose_predictor: OpenPosePredictor):
     """
-    It takes an image and a pose predictor, and returns a JSON object with the keypoints of the pose
+    It takes an image and a pose predictor, and returns a JSON object with the keypoints of the pose.
 
     Args:
-      img (np.array): the image to be processed
-      pose_predictor (PosePredictor): PosePredictor object
+      img (np.array): the image to be processed.
+      pose_predictor (PosePredictor): PosePredictor object.
 
     Returns:
       A dictionary with the keypoints of the person in the image.

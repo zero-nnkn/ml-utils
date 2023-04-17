@@ -14,7 +14,7 @@ def frames2video(
     Args:
       img_paths (list[str]): List of frame paths.
       video_path (str): The path where the generated video will be saved.
-      fourcc_code (str): 4-character code of codec used to compress the frames. Defaults to mp4v.
+      fourcc_code (str): 4-character code of codec used to compress the frames. Defaults to "mp4v".
       fps (float): FPS of the output video. Defaults to 30.
       size (tuple[int, int]): Size (w, h) of output video. If None, use (w, h) of first frame.
     """

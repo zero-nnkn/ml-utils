@@ -6,7 +6,7 @@ import torch
 
 def sync_time():
     """
-    It synchronizes the time on the GPU with the time on the CPU
+    It synchronizes the time on the GPU with the time on the CPU.
 
     Returns:
       The time in seconds since the epoch as a floating point number.
@@ -19,7 +19,7 @@ def sync_time():
 class Profile(contextlib.ContextDecorator):
     """
     YOLOv8 Profile class.
-    Usage: as a decorator with @Profile() or as a context manager with 'with Profile():'
+    Usage: as a decorator with @Profile() or as a context manager with 'with Profile():'.
     Source: https://github.com/ultralytics/ultralytics/blob/main/ultralytics/yolo/utils/ops.py
     """
 
