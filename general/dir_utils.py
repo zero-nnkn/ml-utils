@@ -59,10 +59,10 @@ def random_split(
     )
 
     # Split
-    copy_files(train, train_path)
-    copy_files(val, val_path)
+    copy_files(train, train_path, move=move)
+    copy_files(val, val_path, move=move)
     if len(test) > 0:
-        copy_files(test, test_path)
+        copy_files(test, test_path, move=move)
 
     print(f"Split done: train-{len(train)}, val-{len(val)}, test-{len(test)}")
 
@@ -71,7 +71,7 @@ def get_data_paths(
     dir: str | list[str], data_formats: list, prefix: str = ""
 ) -> list[str]:
     """
-    > It takes a directory or a list of directories and returns a list of all the files in those
+    It takes a directory or a list of directories and returns a list of all the files in those
     directories that have a file extension in the data_formats
     Modified from: https://github.com/ultralytics/yolov5/blob/master/utils/dataloaders.py
 
