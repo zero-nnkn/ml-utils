@@ -9,7 +9,6 @@ class Registry(Iterable[Tuple[str, Any]]):
     """
     The registry that provides name -> object mapping, to support third-party
     users' custom modules.
-    Source: https://github.com/facebookresearch/fvcore/blob/main/fvcore/common/registry.py
 
     To create a registry (e.g. a backbone registry):
 
@@ -35,7 +34,7 @@ class Registry(Iterable[Tuple[str, Any]]):
     def __init__(self, name: str) -> None:
         """
         Args:
-            name (str): the name of this registry.
+            name (str): the name of this registry
         """
         self._name: str = name
         self._obj_map: Dict[str, Any] = {}
@@ -43,9 +42,7 @@ class Registry(Iterable[Tuple[str, Any]]):
     def _do_register(self, name: str, obj: Any) -> None:
         assert (
             name not in self._obj_map
-        ), "An object named '{}' was already registered in '{}' registry!".format(
-            name, self._name
-        )
+        ), f"An object named '{name}' was already registered in '{self._name}' registry!"
         self._obj_map[name] = obj
 
     def register(self, obj: Any = None) -> Any:
@@ -62,16 +59,14 @@ class Registry(Iterable[Tuple[str, Any]]):
 
             return deco
 
-        # Used as a function call
+        # used as a function call
         name = obj.__name__
         self._do_register(name, obj)
 
     def get(self, name: str) -> Any:
         ret = self._obj_map.get(name)
         if ret is None:
-            raise KeyError(
-                f"No object named '{name}' found in '{self._name}' registry!"
-            )
+            raise KeyError(f"No object named '{name}' found in '{self._name}' registry!")
         return ret
 
     def __contains__(self, name: str) -> bool:
@@ -79,9 +74,7 @@ class Registry(Iterable[Tuple[str, Any]]):
 
     def __repr__(self) -> str:
         table_headers = ["Names", "Objects"]
-        table = tabulate(
-            self._obj_map.items(), headers=table_headers, tablefmt="fancy_grid"
-        )
+        table = tabulate(self._obj_map.items(), headers=table_headers, tablefmt="fancy_grid")
         return f"Registry of {self._name}:\n" + table
 
     def __iter__(self) -> Iterator[Tuple[str, Any]]:
