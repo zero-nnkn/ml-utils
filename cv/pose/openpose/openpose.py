@@ -77,13 +77,13 @@ class OpenPosePredictor(ABC):
         keypoints = self._parse_keypoints(output, img_size=(img_w, img_h))
         return keypoints
 
-    def _prepare_input(self, img: np.array) -> None:
+    def _prepare_input(self, img: np.ndarray) -> None:
         """
         It takes an image, resizes it to the input size of the network,
         and sets the image as the input to the network.
 
         Args:
-          img (np.array): Input image.
+          img (np.ndarray): Input image.
         """
         inp_blob = cv2.dnn.blobFromImage(
             img, 1.0 / 255, self.in_size, (0, 0, 0), swapRB=False, crop=False
@@ -326,13 +326,13 @@ class Body25OpenPosePredictor(OpenPosePredictor):
 
 
 def add_keypoints_to_json(
-    img: np.array, pose_predictor: OpenPosePredictor, missing_val: int = 0
+    img: np.ndarray, pose_predictor: OpenPosePredictor, missing_val: int = 0
 ) -> dict:
     """
     Get JSON object with the keypoints of the pose.
 
     Args:
-      img (np.array): Image to be processed.
+      img (np.ndarray): Image to be processed.
       pose_predictor (PosePredictor): PosePredictor object.
 
     Returns:
