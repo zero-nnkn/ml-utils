@@ -325,7 +325,9 @@ class Body25OpenPosePredictor(OpenPosePredictor):
         ]
 
 
-def add_keypoints_to_json(img: np.array, pose_predictor: OpenPosePredictor):
+def add_keypoints_to_json(
+    img: np.array, pose_predictor: OpenPosePredictor, missing_val: int = 0
+) -> dict:
     """
     Get JSON object with the keypoints of the pose.
 
@@ -337,8 +339,8 @@ def add_keypoints_to_json(img: np.array, pose_predictor: OpenPosePredictor):
       A dictionary with the keypoints of the person in the image.
     """
     keypoints = [
-        p if p else (0, 0, 0) for p in pose_predictor.predict(img)
-    ]  # replace None with [0, 0, 0]
+        p if p else (missing_val,) * 3 for p in pose_predictor.predict(img)
+    ]  # replace None with (missing_val, missing_val, missing_val)
     keypoints = [item for p in keypoints for item in p]  # flat list
     pose_json = {'version': 1.0, 'people': [{'pose_keypoints': keypoints}]}
 
