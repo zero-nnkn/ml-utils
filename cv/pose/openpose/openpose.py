@@ -19,7 +19,6 @@ class OpenPosePredictor(ABC):
         prototxt_path: str,
         weight_path: str,
         in_size: tuple = (368, 368),
-        threshold: float = 0.05,
     ) -> None:
         """
         It initializes the model.
@@ -32,10 +31,8 @@ class OpenPosePredictor(ABC):
             MPI:     https://posefs1.perception.cs.cmu.edu/OpenPose/models/pose/mpi/pose_iter_160000.caffemodel
             BODY_25: https://posefs1.perception.cs.cmu.edu/OpenPose/models/pose/body_25/pose_iter_584000.caffemodel
           in_size (tuple): Input image dimensions.
-          threshold (float): Confidence threshold to identify key points.
         """  # noqa
         self.in_size = in_size  # (in_width, in_height)
-        self.threshold = threshold
         self._init__model_infor()
         self.pose_net = self._create_model(prototxt_path, weight_path)
 
@@ -61,12 +58,13 @@ class OpenPosePredictor(ABC):
         model = cv2.dnn.readNetFromCaffe(prototxt_path, weight_path)
         return model
 
-    def predict(self, img) -> list:
+    def predict(self, img: np.ndarray, threshold: float = 0.05) -> list:
         """
         It takes an image as input, runs it through the network, and returns a list of keypoints.
 
         Args:
           img: Image to be processed.
+          threshold (float): Confidence threshold to identify key points.
 
         Returns:
           A list of keypoints.
@@ -74,7 +72,7 @@ class OpenPosePredictor(ABC):
         img_h, img_w, _ = img.shape
         self._prepare_input(img)
         output = self.pose_net.forward()
-        keypoints = self._parse_keypoints(output, img_size=(img_w, img_h))
+        keypoints = self._parse_keypoints(output, img_size=(img_w, img_h), threshold=threshold)
         return keypoints
 
     def _prepare_input(self, img: np.ndarray) -> None:
@@ -90,7 +88,7 @@ class OpenPosePredictor(ABC):
         )
         self.pose_net.setInput(inp_blob)
 
-    def _parse_keypoints(self, net_ouput: cv2.Mat, img_size: tuple) -> list:
+    def _parse_keypoints(self, net_ouput: cv2.Mat, img_size: tuple, threshold: float) -> list:
         """
         It takes the output of the neural network, and returns a list of the x,y coordinates of the
         keypoints, and the confidence of each keypoint.
@@ -102,6 +100,7 @@ class OpenPosePredictor(ABC):
                 Ex COCO: 18 keypoint confidence maps + 1 background + 19*2 Part Affinity Maps.
             - 3rd, 4th: height, width of output map.
           img_size (tuple): Size of the image that we're going to be processing.
+          threshold (float): Confidence threshold to identify key points.
 
         Returns:
           A list of the x, y, and probability of each keypoint.
@@ -120,14 +119,16 @@ class OpenPosePredictor(ABC):
             x = (img_size[0] * point[0]) / W
             y = (img_size[1] * point[1]) / H
 
-            if prob > self.threshold:
+            if prob > threshold:
                 points.append((x, y, prob))
             else:
                 points.append(None)
 
         return points
 
-    def visualize(self, keypoints: list, img, put_text: bool = False):
+    def visualize(
+        self, keypoints: list, img, put_text: bool = False, threshold: float = 0
+    ) -> np.ndarray:
         """
         It takes a list of keypoints and an image, and draws the skeleton keypoints on the image.
 
@@ -142,25 +143,34 @@ class OpenPosePredictor(ABC):
         img_copy = img.copy()
 
         # Draw keypoints
-        img_copy = self._visualize_points(keypoints, img, put_text)
+        img_copy = self._visualize_points(
+            keypoints, img_copy, put_text=put_text, threshold=threshold
+        )
 
         # Draw skeleton
         for pair in self.POSE_PAIRS:
             p1, p2 = self.BODY_PARTS[pair[0]], self.BODY_PARTS[pair[1]]
 
-            if keypoints[p1] and keypoints[p2]:
+            if (
+                keypoints[p1] is not None
+                and keypoints[p1][-1] > threshold
+                and keypoints[p2] is not None
+                and keypoints[p2][-1] > threshold
+            ):
                 x1, y1, prob1 = keypoints[p1]
                 x2, y2, prob2 = keypoints[p2]
                 cv2.line(img_copy, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 3)
 
         return img_copy
 
-    def _visualize_points(self, keypoints: list, img, put_text: bool = False):
+    def _visualize_points(
+        self, keypoints: list, img, put_text: bool, threshold: float
+    ) -> np.ndarray:
         """
         It takes a list of keypoints and an image, and draws a circle around each keypoint.
         """
         for i in range(len(self.BODY_PARTS)):
-            if keypoints[i]:
+            if keypoints[i] is not None and keypoints[i][-1] > threshold:
                 x, y, prob = keypoints[i]
                 cv2.circle(
                     img,
