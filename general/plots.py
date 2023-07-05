@@ -1,3 +1,6 @@
+import PIL
+
+
 def get_palette(num_cls: int) -> list[int]:
     """
     Returns the color map for visualizing the segmentation mask.
@@ -25,3 +28,35 @@ def get_palette(num_cls: int) -> list[int]:
             i += 1
             lab >>= 3
     return palette
+
+
+def merge_images(imgs, offset=0, axes='hor'):
+    """
+    Merge images in list horizontally or vertically with offset between.
+
+    Args:
+      imgs: List of images (PIL.Image).
+      offset: Space (pixels) between the merged images. Defaults to 0
+      axes: Orientation in which the images will be merged (hor or ver). Defaults to 'hor'.
+
+    Returns:
+      A new image that is created by merging the input images
+    """
+    assert axes not in ['hor', 'ver'], "axes must be 'hor' or 'ver'"
+
+    widths, heights = zip(*(i.size for i in imgs))
+    cur_pos = 0
+    if axes == 'hor':
+        w, h = sum(widths), max(heights)
+        new_im = PIL.Image.new('RGB', (w, h))
+        for im in imgs:
+            new_im.paste(im, (cur_pos, 0))
+            cur_pos = cur_pos + im.size[0] + offset
+    elif axes == 'ver':
+        w, h = max(widths), sum(heights)
+        new_im = PIL.Image.new('RGB', (w, h))
+        for i, im in enumerate(imgs):
+            new_im.paste(im, (0, cur_pos))
+            cur_pos = cur_pos + im.size[1] + offset
+
+    return new_im
