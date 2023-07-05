@@ -1,5 +1,4 @@
 import glob
-import os
 import random
 import shutil
 from pathlib import Path
@@ -65,38 +64,25 @@ def random_split(
 
 def get_data_paths(dir: str | list[str], data_formats: list, prefix: str = '') -> list[str]:
     """
-    It takes a directory or a list of directories and returns a list of all the files in those
-    directories that have a file extension in the data_formats.
-    Modified from: https://github.com/ultralytics/yolov5/blob/master/utils/dataloaders.py
+    Get list of files in a folder that have a file extension in the data_formats.
 
     Args:
       dir (str | list[str]): Dir or list of dirs containing data.
-      data_formats (list): List of file extensions.
+      data_formats (list): List of file extensions. Ex: ['jpg', 'png']
       prefix (str): Prefix for logging messages.
 
     Returns:
       A list of strings.
-
-    Example of data_formats:
-      IMG_FORMATS = 'bmp', 'dng', 'jpeg', 'jpg', 'png'
     """
     try:
         f = []  # data files
         for d in dir if isinstance(dir, list) else [dir]:
-            p = Path(d)  # os-agnostic
-            if p.is_dir():  # dir
+            p = Path(d)
+            if p.is_dir():
                 f += glob.glob(str(p / '**' / '*.*'), recursive=True)
-            elif p.is_file():  # file
-                with open(p) as t:
-                    t = t.read().strip().splitlines()
-                    parent = str(p.parent) + os.sep
-                    f += [
-                        x.replace('./', parent, 1) if x.startswith('./') else x for x in t
-                    ]  # to global path
             else:
                 raise FileNotFoundError(f'{prefix}{p} does not exist')
         data_files = sorted(x for x in f if x.split('.')[-1].lower() in data_formats)
-        assert data_files, f'{prefix}No data found'
         return data_files
     except Exception as e:
         raise Exception(f'{prefix}Error loading data from {dir}: {e}') from e
